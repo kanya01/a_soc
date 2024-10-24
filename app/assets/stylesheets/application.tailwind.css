@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+
+@layer components {
+  .btn-primary {
+    @apply py-2 px-4 bg-blue-200;
+  }
+}
+
+*/
+/* Custom Components */
+@layer components {
+    .flash-message {
+        @apply p-4 mb-4 rounded relative;
+    }
+
+    .flash-message.notice {
+        @apply bg-green-100 text-green-700;
+    }
+
+    .flash-message.alert {
+        @apply bg-red-100 text-red-700;
+    }
+
+    .flash-message .dismiss {
+        @apply absolute right-2 top-2;
+    }
+}

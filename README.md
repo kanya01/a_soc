@@ -1,232 +1,191 @@
-# README
-ASoc 
+# ASoc 🎵
+> Modern audio-first social platform built with Rails 7
 
-Overview
-ASoc is a social media platform focused on audio sharing and interaction. Users can share audio posts, images, and engage with other users through comments and likes.
-Technical Stack
-Core Technologies
+[![Ruby Version](https://img.shields.io/badge/ruby-3.1.2-brightgreen.svg)](https://ruby-lang.org)
+[![Rails Version](https://img.shields.io/badge/rails-7.1.4-brightgreen.svg)](https://rubyonrails.org)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
-Ruby 3.1.2
-Rails 7.1.4
-PostgreSQL 14+
-Node.js 18+ (for JavaScript compilation)
-Yarn 1.22+ (for package management)
+## ✨ Features
 
-Key Dependencies
-Production Gems
-rubyCopy# Gemfile
-gem 'rails', '~> 7.1.4'
-gem 'pg', '~> 1.1'
-gem 'puma', '~> 6.0'
-gem 'devise', '~> 4.9' # Authentication
-gem 'kaminari', '~> 1.2' # Pagination
-gem 'image_processing', '~> 1.2' # Image processing for Active Storage
-gem 'aws-sdk-s3', '~> 1.14' # AWS S3 for file storage
-gem 'sidekiq', '~> 7.0' # Background job processing
-gem 'redis', '~> 5.0' # Required for Sidekiq
-gem 'sprockets-rails'
-gem 'importmap-rails'
-gem 'turbo-rails'
-gem 'stimulus-rails'
-gem 'tailwindcss-rails'
-Development/Test Gems
-rubyCopygroup :development, :test do
-gem 'rspec-rails', '~> 6.0'
-gem 'factory_bot_rails'
-gem 'faker'
-gem 'pry-rails'
-gem 'rubocop', '~> 1.60'
-gem 'rubocop-rails'
-gem 'brakeman' # Security analysis
-gem 'bullet' # N+1 query detection
-end
+- 🎵 Audio post sharing with waveform visualization
+- 📸 Image attachment support
+- 💬 Real-time comments and interactions
+- 👥 User profiles and authentication
+- 📱 Responsive design with Tailwind CSS
 
-group :test do
-gem 'shoulda-matchers'
-gem 'simplecov'
-gem 'capybara'
-gem 'webdrivers'
-end
+## 🚀 Quick Start
 
-Setup Instructions
-Prerequisites
+### Prerequisites
 
-Install Ruby 3.1.2 (recommended using rbenv)
-Install PostgreSQL 14+
-Install Redis (for Sidekiq)
-Install Node.js and Yarn
+- Ruby 3.1.2
+- PostgreSQL 14+
+- Redis 7+
+- Node.js 18+
+- Yarn 1.22+
 
-Development Environment Setup
-bashCopy# Clone the repository
+### Setup
+
+```bash
+# Clone and install dependencies
 git clone https://github.com/yourusername/asoc.git
 cd asoc
-
-# Install dependencies
 bundle install
 yarn install
 
 # Setup database
-rails db:create
-rails db:migrate
-rails db:seed
+rails db:setup
 
-# Start the development server
-./bin/dev # This starts both Rails server and asset compilation
-Running Tests
-bashCopy# Run all tests
+# Start development servers
+./bin/dev
+```
+
+## 💎 Key Dependencies
+
+### Production
+```ruby
+gem 'rails', '~> 7.1.4'
+gem 'devise'        # Authentication
+gem 'sidekiq'       # Background jobs
+gem 'redis'         # Caching & Sidekiq
+gem 'aws-sdk-s3'    # File storage
+```
+
+### Development/Test
+```ruby
+gem 'rspec-rails'
+gem 'factory_bot_rails'
+gem 'rubocop-rails'
+gem 'bullet'        # N+1 query detection
+```
+
+## 🏗️ Architecture
+
+### Core Components
+
+```
+app/
+├── controllers/    # Request handling
+├── jobs/          # Background processing
+├── models/        # Business logic
+└── views/         # UI templates
+```
+
+### Background Processing
+
+Sidekiq for handling:
+- Audio processing & waveform generation
+- Notification delivery
+- Feed generation
+- Content moderation
+
+```ruby
+# Example job structure
+class AudioProcessingJob < ApplicationJob
+  queue_as :default
+  
+  def perform(post_id)
+    # Process audio file
+    # Generate waveform
+  end
+end
+```
+
+## 🔄 Redis Integration
+
+
+Redis powers the following features:
+- Background job queues (Sidekiq)
+- Caching layer
+- Real-time features
+- Session storage
+
+### Configuration
+
+```ruby
+# config/redis.yml
+production:
+  url: <%= ENV.fetch("REDIS_URL") %>
+  timeout: 1
+```
+
+## 🎯 Roadmap
+
+### Phase 1 
+- [x] Core audio sharing
+- [x] User authentication
+- [x] Basic interactions
+- [ ] Waveform visualization
+- [ ] Real-time notifications
+- [ ] Docker containerization
+- [ ] CI pipeline setup
+
+### Phase 2 
+- [ ] Playlists
+- [ ] Audio effects
+- [ ] Direct messaging
+- [ ] Content moderation
+- [ ] AWS Infrastructure Setup
+- [ ] S3 for media storage
+- [ ] Analytics dashboard
+
+### Phase 3 - 
+- [ ] Mobile app (React Native)
+- [ ] API documentation
+- [ ] Performance optimization
+- [ ] Recommendation system
+- [ ] Premium features
+- [ ] Monetization
+
+## 🧪 Testing
+
+```bash
+# Run test suite
 bundle exec rspec
 
-# Run specific test file
-bundle exec rspec spec/models/post_spec.rb
-
-# Generate coverage report
+# With coverage
 COVERAGE=true bundle exec rspec
-Project Structure
-Key Components
-Models
+```
 
-User: Handles user authentication and profile management
-Post: Main content model for audio and image posts
-Comment: User comments on posts
-Like: User likes on posts
+## 🚀 Deployment
 
-Controllers
-
-PostsController: Handles post CRUD operations
-CommentsController: Manages comment creation and deletion
-UsersController: Handles user profile and settings
-
-Background Jobs
-Current implementation plans include:
-rubyCopy# app/jobs/audio_processing_job.rb
-class AudioProcessingJob < ApplicationJob
-queue_as :default
-
-def perform(post_id)
-post = Post.find(post_id)
-# Process audio file
-# Generate waveform
-# Create different format versions
-end
-end
-
-# app/jobs/notification_job.rb
-class NotificationJob < ApplicationJob
-queue_as :notifications
-
-def perform(user_id, notification_type, data)
-user = User.find(user_id)
-# Generate and send notification
-end
-end
-Redis and Sidekiq Implementation
-Configuration
-
-Redis Setup
-
-rubyCopy# config/initializers/redis.rb
-$redis = Redis.new(
-url: ENV.fetch('REDIS_URL') { 'redis://localhost:6379/1' },
-timeout: 1
-)
-
-Sidekiq Setup
-
-rubyCopy# config/initializers/sidekiq.rb
-Sidekiq.configure_server do |config|
-config.redis = { url: ENV.fetch('REDIS_URL') { 'redis://localhost:6379/1' } }
-end
-
-Sidekiq.configure_client do |config|
-config.redis = { url: ENV.fetch('REDIS_URL') { 'redis://localhost:6379/1' } }
-end
-
-Route Configuration
-
-rubyCopy# config/routes.rb
-require 'sidekiq/web'
-
-Rails.application.routes.draw do
-authenticate :user, lambda { |u| u.admin? } do
-mount Sidekiq::Web => '/sidekiq'
-end
-# ... other routes
-end
-Planned Background Jobs
-
-Audio Processing
-
-
-Format conversion
-Waveform generation
-Metadata extraction
-Thumbnail generation
-
-
-Notification System
-
-
-Comment notifications
-Like notifications
-Mention notifications
-Follow notifications
-
-
-Feed Generation
-
-
-User feed caching
-Trending posts calculation
-Featured content selection
-
-Future Improvements
-Short-term Goals
-
-Implement audio waveform visualization
-Add real-time notifications using Action Cable
-Improve search functionality with Elasticsearch
-Add social features (following, user discovery)
-Implement post sharing functionality
-
-Medium-term Goals
-
-Add playlist creation and management
-Implement audio effects and filters
-Add direct messaging between users
-Implement content moderation system
-Add analytics dashboard for users
-
-Long-term Goals
-
-Mobile app development (React Native)
-API versioning and documentation
-Content recommendation system
-Monetization features
-Premium user features
-
-Deployment
-Production Setup
-bashCopy# Required environment variables
+Required environment variables:
+```bash
 RAILS_ENV=production
 DATABASE_URL=postgresql://...
 REDIS_URL=redis://...
 AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=...
 AWS_BUCKET=...
-Monitoring
+```
 
-Use Datadog or New Relic for application monitoring
-Set up error tracking with Sentry
-Configure logging with ELK stack
+## 📈 Monitoring
 
-Contributing
+- Application: Datadog/New Relic
+- Error tracking: Sentry
+- Logging: ELK stack
 
-Fork the repository
-Create your feature branch (git checkout -b feature/amazing-feature)
-Commit your changes (git commit -m 'Add amazing feature')
-Push to the branch (git push origin feature/amazing-feature)
-Open a Pull Request
+## 🤝 Contributing
 
-License
-This project is licensed under the MIT License - see the LICENSE.md file for details
+1. Fork it
+2. Create feature branch
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. Commit changes
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+4. Push to branch
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. Create Pull Request
+
+## 📝 
+
+[MIT License](LICENSE.md)
+
+
+
+---
+
+Built with  by Moses Mwangi
